@@ -10,12 +10,6 @@ module.exports = function(app) {
   });
 
 
-  //Chưa làm chức năng lấy một phần(không lấy toàn bộ tin nhắn)
-  //Gửi htt prequest theo dạng
-  //{
-  //  "user1":"01235",
-  //  "user2":"98765"
-  //}
   app.get(
     "/api/room/getdata", 
     controller.getdata

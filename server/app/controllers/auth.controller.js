@@ -31,7 +31,6 @@ exports.signup = async (req, res) => {
   }
 };
 
-// Làm phần SignIn, SignOut
 exports.signin = async (req, res) => {
   try {
     const user = await USER.findOne({ phone: req.body.phone });
@@ -39,13 +38,12 @@ exports.signin = async (req, res) => {
     if (user) {
       const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
       if (passwordIsValid) {
-        //chatRooms làm riêng với friends vì hủy kết bạn vẫn còn phòng
         let chatRooms = await CHATROOM.find({ owner: user });
         let friends = await USER.find({ _id: user.contacts }, { password: 0, requestContact: 0, contacts: 0, createAt: 0, lastAccess: 0, __v: 0 });
         let requestContact = await USER.find({ _id: user.requestContact }, { password: 0, requestContact: 0, contacts: 0, createAt: 0, lastAccess: 0, __v: 0 });
 
         const token = jwt.sign({ id: user._id }, config.secret, {
-          expiresIn: 86400, // 24 hours
+          expiresIn: 86400, 
         });
         console.log(chatRooms)
         let roomInfo = [];
@@ -74,7 +72,6 @@ exports.signin = async (req, res) => {
           }
         }
 
-        //Send đăng nhập ở chỗ này
         res.status(200).send({
           message: {
             '_id': user._id,

@@ -22,7 +22,6 @@ exports.getInfoUser = async (req, res) => {
 
     try {
         const user = await USER.findById(req.userId);
-        //chatRooms làm riêng với friends vì hủy kết bạn vẫn còn phòng
         let chatRooms = await CHATROOM.find({ owner: user });
         let friends = await USER.find({ _id: user.contacts }, { password: 0, requestContact: 0, contacts: 0, createAt: 0, lastAccess: 0, __v: 0 });
         let requestContact = await USER.find({ _id: user.requestContact }, { password: 0, requestContact: 0, contacts: 0, createAt: 0, lastAccess: 0, __v: 0 });
@@ -57,7 +56,6 @@ exports.getInfoUser = async (req, res) => {
             }
         }
 
-        //Send đăng nhập ở chỗ này
         res.status(200).send({
             message: {
                 '_id': user._id,

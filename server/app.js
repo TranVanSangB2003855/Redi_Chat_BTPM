@@ -28,16 +28,13 @@ require('./app/routes/user.route')(app);
 require('./app/routes/room.route')(app);
 
 app.use((err, req, res, next) => {
-  // Middleware xử lý lỗi tập trung.
-  // Trong các đoạn code xử lý ở các route, gọi next(error)
-  // sẽ chuyển về middleware xử lý lỗi này
+
   return res.status(err.statusCode || 500).json({
     message: err.message || "Internal Server Error",
   });
 });
 
 
-// Socket.io cho Chat với người lạ
 const serverForChatWithStranger = require('http').createServer(app);
 const ioChatWithStranger = require("socket.io")(serverForChatWithStranger, {
   cors: {
@@ -86,7 +83,7 @@ ioChatWithStranger.on('connection', (socket) => {
     clientRoom = getClientRoomStranger(preRoom, socket.id);
     console.log("clientRoomNew: " + clientRoom + ".....");
     socket.join(clientRoom);
-    if (ioChatWithStranger.sockets.adapter.rooms.get(clientRoom).size < 2) {//.length < 2) {
+    if (ioChatWithStranger.sockets.adapter.rooms.get(clientRoom).size < 2) {
       ioChatWithStranger.in(clientRoom).emit('statusRoomStranger', {
         content: 'Đang đợi người lạ ...',
         createAt: redi.getTime()
@@ -99,7 +96,7 @@ ioChatWithStranger.on('connection', (socket) => {
     }
   })
 
-  if (ioChatWithStranger.sockets.adapter.rooms.get(clientRoom).size < 2) {//.length < 2) {
+  if (ioChatWithStranger.sockets.adapter.rooms.get(clientRoom).size < 2) {
     ioChatWithStranger.in(clientRoom).emit('statusRoomStranger', {
       content: 'Đang đợi người lạ ...',
       createAt: redi.getTime()
@@ -126,7 +123,7 @@ ioChatWithStranger.on('connection', (socket) => {
       createAt: redi.getTime()
     });
 
-    //Tui thêm if vì callback typeError khi dùng postman để test
+
     if (typeof callback === 'function') {
       callback({
         "status": "ok",
@@ -144,7 +141,7 @@ serverForChatWithStranger.listen(3001, () => {
   console.log('listening on *:3001');
 });
 
-// Socket.io cho người có tài khoản Chat
+
 const serverForUserChat = require('http').createServer(app);
 
 const ioForUserChat = require("socket.io")(serverForUserChat, {
@@ -174,10 +171,7 @@ ioForUserChat.on('connection', (socket) => {
   let userPhone;
   let user;
   let chatRooms;
-  //Nên có 1 event listener trên socket 'message' dùng để thông báo
-  //Gửi thông tin người dùng đã nhận được từ backend:
-  //  - Gửi thông tin đã online đến những người đã kết bạn (chung room)
-  //data là sdt của người dùng
+
   socket.on('sendUser', async data => {
     userPhone = data;
     user = await USER.findOne({ phone: userPhone });
@@ -188,16 +182,16 @@ ioForUserChat.on('connection', (socket) => {
       socket.join(chatRoom._id.toString());
       let countUser = ioForUserChat.sockets.adapter.rooms.get(chatRoom._id.toString()).size;
       if (countUser > 1) {
-        //Gửi đến bạn
+
         socket.to(chatRoom._id.toString()).emit('onlineStatus', {
-          //Nếu có làm group thì thêm userID
+          
           roomID: chatRoom._id.toString(),
           online: true
         });
 
-        //Gửi đến mình
+        
         socket.emit('onlineStatus', {
-          //Nếu có làm group thì thêm userID
+          
           roomID: chatRoom._id.toString(),
           online: true
         });
@@ -205,8 +199,8 @@ ioForUserChat.on('connection', (socket) => {
     });
   });
 
-  // Các xử lý sự kiện khi người dùng đăng nhập thành công gồm: 
-  //Tìm tài khoản để gửi kết bạn:
+  
+  
   socket.on('findUser', async targetPhone => {
     try {
       let target = await USER.findOne({ phone: targetPhone });
@@ -234,8 +228,8 @@ ioForUserChat.on('connection', (socket) => {
       console.error(error);
     }
   });
-  //  - Gửi yêu cầu kết bạn/ Nhập yêu cầu kết bạn (có lưu vào CSDL)
-  //Gửi số điện thoại người muốn kết bạn(đã có kiểm tra tồn tại)
+  
+  
   socket.on('sendFriendRequest', async targetPhone => {
     if (await USER.findOne({ phone: targetPhone, requestContact: user })) {
       socket.emit('message', 'Đã gửi lời mời kết bạn rồi !');
@@ -257,12 +251,12 @@ ioForUserChat.on('connection', (socket) => {
     }
   });
 
-  //Chấp nhận/từ chối lời mời kết bạn
-  //Template socket.io(nếu accept là false nghĩa là từ chối kết bạn):
-  // {
-  //   "phone":"01235",
-  //   "accept":true
-  // }
+  
+  
+  
+  
+  
+  
   socket.on('actionFriendRequest', async data => {
     let target = await USER.findOne({ phone: data.phone });
     let accept = data.accept;
@@ -282,14 +276,14 @@ ioForUserChat.on('connection', (socket) => {
             { $push: { contacts: target } },
             { new: true }
           );
-          //Lưu vào csdl của người gửi
+          
           await USER.findByIdAndUpdate(
             target._id,
             { $push: { contacts: user } },
             { new: true }
           );
 
-          //Tạo phòng mới
+          
           try {
             const room = await CHATROOM.findOne({
               owner: { $all: [user, target] }
@@ -327,8 +321,8 @@ ioForUserChat.on('connection', (socket) => {
     }
   });
 
-  //Xóa bạn
-  //Gửi số điện thoại của người muốn xóa(đã có kiểm tra tồn tại)
+  
+  
   socket.on('deleteFriend', async targetPhone => {
     let target = await USER.findOne({ phone: targetPhone });
     if (await USER.findOne({ phone: user.phone, contacts: target })) {
@@ -347,13 +341,13 @@ ioForUserChat.on('connection', (socket) => {
     }
   });
 
-  //Gửi thông tin phòng
+  
   socket.on('loadContentChatRoom', async roomId => {
     let messages = await MESSAGE.find({ chat: roomId });
     socket.emit('receiveContentChatRoom', messages)
   });
 
-  //Gửi thông tin đã xem tất cả tin nhắn trong phòng roomId
+  
   socket.on('seenAllMessage', async roomId => {
     let messages = await MESSAGE.find({ $and: [{ chat: roomId }, { sender: { $ne: user._id } }] });
     messages.forEach(async message => {
@@ -368,13 +362,13 @@ ioForUserChat.on('connection', (socket) => {
     socket.to(roomId).emit('updateMessages', roomId);
   });
 
-  //  - Gửi/nhận tin nhắn với bạn bè (có lưu vào CSDL)
-  //Message có dạng:
-  // {
-  //   "roomID": "640c3823cc03aac30b541544",
-  //   "content": "Tawawa with type",
-  //   "type": "image"
-  // }
+  
+  
+  
+  
+  
+  
+  
   socket.on('sendMessageFriend', async function (message, callback) {
     console.log(message)
     let currentRoom = await CHATROOM.findById(message.roomID);
@@ -417,13 +411,13 @@ ioForUserChat.on('connection', (socket) => {
     console.log("[Socket Friend] ["+user.fullName+"] Bị ngắt kết nối do: "+reason);
   });
 
-  //  - Khi disconnect thì cập nhật lastAccess của user tương ứng trong CSDL
+  
   socket.on('disconnect', async () => {
     try {
       console.log("User " + user.fullName + " đã ngắt kết nối");
       chatRooms.forEach(chatRoom => {
         socket.to(chatRoom._id.toString()).emit('onlineStatus', {
-          //Nếu có làm group thì thêm userID
+          
           roomID: chatRoom._id.toString(),
           online: false
         });

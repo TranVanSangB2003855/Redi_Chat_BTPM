@@ -19,7 +19,7 @@ module.exports = function(app) {
     controller.signin
   );
 
-  //Tui đổi thành put vì có cập nhật last access date
+
   app.put(
     "/api/auth/signout", 
     controller.signout
