@@ -102,9 +102,6 @@
             <div class="content_body-signup" v-show="statusSidebar === 'notSignIn'">
                 <button href="#" class="btn btn-sign" id="open-form-dangnhap1">Đăng Ký</button>
                 <button href="#" class="btn btn-log">Đăng Nhập</button>
-                <div class="note">
-                    *Bằng cách bấm vào phần "Người lạ", bạn có thể trò chuyện ngay với người lạ mà không cần Đăng nhập.
-                </div>
             </div>
 
             <!-- Contacts -->
@@ -248,7 +245,6 @@ export default {
     computed: {
         chatRoomsString() {
             let x = this.user.chatRooms.map(chatRoom => {
-                if (chatRoom._id === "000") return "";
                 // console.log(chatRoom.owner)
                 const id = (chatRoom.owner[0] === this.user._id) ? chatRoom.owner[1] : chatRoom.owner[0];
                 let phone;
@@ -264,17 +260,9 @@ export default {
         },
         chatRooms() {
             if (this.searchText === "") {
-                let stranger = {
-                    _id: "000",
-                    owner: [],
-                    lastMessageDate: "0:0 0-0-0",
-                    fullNameFriend: "Người lạ",
-                    avatar: "http://res.cloudinary.com/dwnunieno/image/upload/v1679058005/sdrdzt5t2bhs5lvgsflj.png",
-                    online: false
-                };
                 let filteredChatRooms = this.user.chatRooms;
                 filteredChatRooms.sort(Redi.compareFn);
-                return [stranger].concat(filteredChatRooms);
+                return filteredChatRooms;
             } else {
                 let searchText = Redi.removeAccents(this.searchText);
                 let filteredChatRooms = this.user.chatRooms.filter((chatRoom, index) => {
@@ -366,9 +354,6 @@ export default {
             if (chatRoom._id === this.currentChatRoom._id)
                 return;
             this.currentChatRoom = { ...chatRoom, messages: [] };
-            if (chatRoom._id === "000")
-                useStore().chatWithStranger();
-            else {
                 SocketioService.loadContentChatRoom(chatRoom._id.toString());
                 this.user.chatRooms.forEach(room => {
                     if (chatRoom._id === room._id && room.lastMessage) {
@@ -377,7 +362,6 @@ export default {
                 })
                 SocketioService.seenAllMessage(chatRoom._id);
                 useStore().switchChatContent();
-            }
         },
         openUploadModal() {
             Redi.openUploadModal('Sidebar', (data) => {

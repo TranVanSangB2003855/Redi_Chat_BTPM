@@ -203,7 +203,6 @@ export default {
     data() {
         let store = useStore();
         let { statusContent } = storeToRefs(store);
-        let { chatRoomStranger } = storeToRefs(store);
         let { user } = storeToRefs(store);
         const { currentChatRoom } = storeToRefs(store);
         const eFormInput = ['#btn-sendImg', '#btn-sendMess', '#input-sendMess'];
@@ -211,10 +210,7 @@ export default {
         const eStopChat = ['#btn-stopChat'];
         return {
             statusContent,
-            messagesChatWithStranger: [],
-            inputMessageTextChatWithStranger: '',
             url: '',
-            chatRoomStranger,
             user,
             inputMessageText: "",
             currentChatRoom,
@@ -238,28 +234,6 @@ export default {
                 }
             }
             return -1;
-        }
-    },
-    watch: {
-        statusContent(newValue, oldValue) {
-            if (newValue === "chatWithStranger") {
-                setTimeout(() => {
-                    if (!this.chatRoomStranger) {
-                        Redi.disableElements(this.eNewChat, false);
-                        Redi.disableElements(this.eFormInput.concat(this.eStopChat), true);
-                    }
-                    else {
-                        Redi.disableElements(this.eFormInput.concat(this.eStopChat).concat(this.eNewChat), false);
-                    }
-                    oldValue.toString();
-                }, 80);
-            }
-        },
-        messagesChatWithStranger: {
-            deep: true,
-            handler() {
-                Redi.autoSrcollTop(".content_body");
-            }
         }
     },
     methods: {
@@ -322,97 +296,6 @@ export default {
                         }
                     }
                 }).open();
-        },
-        connectSocketStranger() {
-            setTimeout(() => {
-                const chatRoom = this.chatRoomStranger;
-                // console.log(chatRoom)
-                if (chatRoom !== '') {
-                    this.messagesChatWithStranger = [{ content: "Đang đợi người lạ ...", name: "Bot" }];
-                    Redi.disableElements(this.eFormInput.concat(this.eNewChat), true);
-                    Redi.disableElements(this.eStopChat, false);
-                    SocketioService.nextRoomStranger(chatRoom);
-                }
-                else {
-                    SocketioService.setupSocketStrangerConnection();
-                    SocketioService.statusRoomStranger((err, data) => {
-                        // console.log(data);
-                        if (data.content === 'Đang đợi người lạ ...') {
-                            Redi.disableElements(this.eFormInput.concat(this.eNewChat), true);
-                            Redi.disableElements(this.eStopChat, false);
-                        }
-                        if (data.content.includes("NextRoom")) {
-                            data.content = "Người lạ đã rời đi. Đang đợi người lạ ..."
-                            Redi.disableElements(this.eFormInput.concat(this.eNewChat), true);
-                            Redi.disableElements(this.eStopChat, false);
-                            useStore().setChatRoomStranger('');
-                        }
-                        else if (this.messagesChatWithStranger.length > 0) {
-                            this.messagesChatWithStranger = [];
-                        }
-                        if (data.content.includes("Người lạ đã vào phòng")) {
-                            const chatRoom = data.content.substr(data.content.indexOf("|") + 1, data.content.length - 1);
-                            useStore().setChatRoomStranger(chatRoom);
-                            data.content = data.content.substr(0, data.content.indexOf("|"));
-                            Redi.disableElements(this.eFormInput.concat(this.eStopChat).concat(this.eNewChat), false);
-                        }
-                        if (data.content === 'Người lạ đã rời đi. Đang đợi người lạ kế tiếp ...') {
-                            Redi.disableElements(this.eFormInput.concat(this.eNewChat), true);
-                            Redi.disableElements(this.eStopChat, false);
-                        }
-                        this.messagesChatWithStranger.push({
-                            name: data.name,
-                            content: data.content,
-                            type: "text",
-                            createAt: data.createAt
-                        });
-                    });
-                    SocketioService.receiveMessageStranger((err, data) => {
-                        // console.log(data);
-                        this.messagesChatWithStranger.push(data);
-                    });
-                }
-            }, 80);
-        },
-        sendMessageStranger(type) {
-            if (!type) return;
-
-            let message;
-            if (type === "text" && this.inputMessageTextChatWithStranger !== '') {
-                message = { content: this.inputMessageTextChatWithStranger, type: type };
-                this.inputMessageTextChatWithStranger = '';
-            }
-            if (type === 'image') {
-                message = { content: this.url, type: type };
-                this.url = ''
-            }
-            if (!message) return;
-            console.log("sending message stranger....");
-            SocketioService.sendMessageStranger(message, cb => {
-                // callback is acknowledgement from server
-                // console.log(cb);
-                this.messagesChatWithStranger.push({
-                    ...message,
-                    createAt: cb.createAt,
-                    name: "Me"
-                });
-            });
-        },
-        stopChatStranger() {
-            setTimeout(() => {
-                SocketioService.disconnectStranger();
-                this.messagesChatWithStranger.push({
-                    type: "text",
-                    createAt: Redi.getTime(),
-                    content: "Bạn đã rời khỏi phòng !",
-                    name: "Bot"
-                });
-                useStore().setChatRoomStranger('');
-                Redi.disableElements(this.eFormInput.concat(this.eStopChat), true);
-                Redi.disableElements(this.eNewChat, false);
-                this.inputMessageTextChatWithStranger = '';
-            }, 69)
-            this.messagesChatWithStranger = [];
         },
         formatTime(time) {
             return Redi.formatTime(time)

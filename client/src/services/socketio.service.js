@@ -3,7 +3,6 @@ import { useStore } from '../stores/Store';
 
 class SocketioService {
   socketStranger;
-  socketFriend;
   chatRoom ='';
 
   setupSocketFriendConnection(token, phone) {
@@ -88,53 +87,6 @@ class SocketioService {
   disconnect() {
     if(this.socketFriend) {
       this.socketFriend.disconnect();
-    }
-  }
-
-  setupSocketStrangerConnection() {
-    this.socketStranger = io(process.env.VUE_APP_SOCKET_ENDPOINT_CHAT_WITH_STRANGER);
-    console.log(`Connecting socket stranger...`);
-
-    this.socketStranger.on("disconnect", (reason) => {
-      if (reason === "ping timeout" || reason === "transport error" || reason === "transport close") {
-        // the disconnection was initiated by the server, you need to reconnect manually
-        console.log("[Socket Stranger]Bị mất kết nối do: "+reason);
-        alert("Phòng nhắn tin bị đóng do internet không ổn định !")
-        this.socketStranger.disconnect();
-      }
-      // else the socket will automatically try to reconnect
-    });
-  }
-
-  receiveMessageStranger(cb){
-    if(!this.socketStranger) return true;
-    this.socketStranger.on("receiveMessageStranger", data => {
-      return cb(null, {
-        ...data,
-        name: "Người lạ",
-      });
-    })
-  }
-
-  statusRoomStranger(cb){
-    if(!this.socketStranger) return true;
-    this.socketStranger.on("statusRoomStranger", message => {
-      return cb(null, {...message, name: "Bot"});
-    })
-  }
-
-  nextRoomStranger(chatRoom){
-      this.socketStranger.emit("nextRoomStranger",chatRoom);
-    // console.log("id",this.socketStranger.id);
-  }
-
-  sendMessageStranger(message, cb) {
-    if(this.socketStranger) this.socketStranger.emit('sendMessageStranger',message,cb);
-  }
-  
-  disconnectStranger() {
-    if(this.socketStranger) {
-      this.socketStranger.disconnect();
     }
   }
 }

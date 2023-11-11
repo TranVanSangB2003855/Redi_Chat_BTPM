@@ -10,7 +10,6 @@ export const useStore = defineStore("store", {
             statusMenu: "notSignIn",
             statusSidebar: "notSignIn",
             statusContent: "notSignIn",
-            chatRoomStranger: '',
             user: {
                 '_id': '',
                 'phone': '',
@@ -104,14 +103,8 @@ export const useStore = defineStore("store", {
                 _id: "",
             }
         },
-        chatWithStranger() {
-            this.statusContent = 'chatWithStranger';
-        },
         switchChatContent() {
             this.statusContent = 'chat';
-        },
-        setChatRoomStranger(roomName) {
-            this.chatRoomStranger = roomName;
         },
         setInfoUser(data) {
             this.user = data
