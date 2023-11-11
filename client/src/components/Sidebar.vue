@@ -253,7 +253,7 @@ export default {
                         phone = contact.phone;
                     }
                 })
-                return [phone, Redi.removeAccents(chatRoom.fullNameFriend)].join("");
+                return phone //[phone, Redi.removeAccents(chatRoom.fullNameFriend)].join("");
             })
             // console.log(x);
             return x;
