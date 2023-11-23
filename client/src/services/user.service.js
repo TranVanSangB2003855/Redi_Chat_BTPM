@@ -6,8 +6,5 @@ class UserService {
     async updateInfo(data) {
         return (await this.api.put("/updateinfo", data)).data;
     }
-    async changePassword(data) {
-        return (await this.api.put("/changepassword", data)).data;
-    }
 }
 export default new UserService();

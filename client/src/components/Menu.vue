@@ -4,23 +4,12 @@
         <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="align-items: center;">Cập nhật thông tin</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="align-items: center;">Cập nhật thông tin cơ bản</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                         @click="clickCloseUpdateMenu()"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
-                                aria-selected="true">Cập nhật thông tin cơ bản</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
-                                aria-selected="false">Đổi mật khẩu</button>
-                        </li>
-                    </ul>
+                    
                     <div class="tab-content" id="pills-tabContent">
                         <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
                             aria-labelledby="pills-home-tab" tabindex="0">
@@ -43,31 +32,6 @@
                                         {{ (this.dataUpdateInfo.avatar === '') ? "Upload ảnh làm ảnh đại diện." :
                                             this.nameFileAvatar }}
                                     </button>
-                                </div>
-                                <button class="btn btn-signup">Cập nhật</button>
-                            </Form>
-                        </div>
-                        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"
-                            tabindex="0">
-                            <Form @submit="changePassword()" :validation-schema="dataChangePasswordFormSchema"
-                                class="form-sign" ref="formChangePassWord">
-                                <div class="form-group">
-                                    <label for="currentPassword">Mật khẩu hiện tại</label>
-                                    <Field name="currentPassword" type="password" class="form-control"
-                                        v-model="dataChangePassword.currentPassword" />
-                                    <ErrorMessage name="currentPassword" class="error-feedback" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="password">Mật Khẩu mới</label>
-                                    <Field name="password" type="password" class="form-control"
-                                        v-model="dataChangePassword.password" />
-                                    <ErrorMessage name="password" class="error-feedback" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="confirmPassword">Xác nhận lại mật khẩu mới</label>
-                                    <Field name="confirmPassword" type="password" class="form-control"
-                                        v-model="dataChangePassword.confirmPassword" />
-                                    <ErrorMessage name="confirmPassword" class="error-feedback" />
                                 </div>
                                 <button class="btn btn-signup">Cập nhật</button>
                             </Form>
