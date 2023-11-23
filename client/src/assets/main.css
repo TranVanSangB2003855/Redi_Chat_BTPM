@@ -262,27 +262,6 @@ h3.sidebar_name {
     margin-bottom: 5px;
 }
 
-@media screen and (max-width: 1000px) {
-    .sidebar_content {
-        width: max-content;
-    }
-
-    .sidebar {
-        width: min-content;
-        max-width: 25.5vw;
-    }
-}
-
-@media screen and (max-width: 880px) {
-    .sidebar_content {
-        display: none;
-    }
-
-    .sidebar {
-        width: min-content;
-    }
-}
-
 
 .modal_form-sign {
     position: absolute;
@@ -756,32 +735,4 @@ h3.sidebar_name {
     margin-top: -15px;
     margin-bottom: -7px;
     height: min-content;
-}
-
-
-
-/* @media screen and (max-width: 1000px){
-    .sidebar {
-        width: 245px;
-    };
-    .content_body-signup button{
-        width: 120px !important
-    }
-} */
-
-@media screen and (max-width: 1000px) {
-    div.chat-box {
-        padding-left: 0px;
-        padding-right: 0px;
-        /* overflow-x: hidden; */
-        /* overflow-y: scroll; */
-    }
-
-    .mess-incoming {
-        width: 99%;
-    }
-
-    /* .content_body {
-        overflow: auto;
-    } */
 }
