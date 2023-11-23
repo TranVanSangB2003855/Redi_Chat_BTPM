@@ -35,15 +35,6 @@ class SocketioService {
       // lưu data vào Pinia
       useStore().setMessagesChatRoom(messages);
     });
-
-    this.socketFriend.on("disconnect", (reason) => {
-      if (reason === "transport close" || reason === "ping timeout" || reason === "transport error") {
-        // the disconnection was initiated by the server, you need to reconnect manually
-        console.log("[Socket Friend]Bị mất kết nối do: "+reason);
-        useStore().reloadData();
-      }
-      // else the socket will automatically try to reconnect
-    });
   }
 
   loadContentChatRoom(roomID){
