@@ -34,6 +34,8 @@
                 <button type="button" @click="openUploadModal()">
                     {{ (this.dataSignUp.avatar === '') ? "Upload ảnh làm ảnh đại diện." : this.nameFileAvatar }}
                 </button>
+                <Field name="avatar" type="text" class="form-control" v-model="dataSignUp.avatar" style="display: none;"/>
+                <ErrorMessage name="avatar" class="error-feedback" />
             </div>
             <button class="btn btn-signup">Đăng ký</button>
             <div class="login-signup">
@@ -187,7 +189,10 @@ export default {
                     /((09|03|07|08|05)+([0-9]{8})\b)/g,
                     "Số điện thoại không hợp lệ."
                 ),
-            confirmPassword: yup.string().oneOf([yup.ref('password'), null], 'Mật khẩu phải trùng khớp.')
+            confirmPassword: yup.string().oneOf([yup.ref('password'), null], 'Mật khẩu không trùng khớp.'),
+            avatar: yup
+                .string()
+                .required("Vui lòng tải ảnh đại diện lên !")
         });
 
         const dataSignInFormSchema = yup.object().shape({
