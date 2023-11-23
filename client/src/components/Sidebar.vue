@@ -185,10 +185,8 @@ export default {
                 .min(8, "Mật khẩu phải ít nhất 8 ký tự."),
             phone: yup
                 .string()
-                .matches(
-                    /((09|03|07|08|05)+([0-9]{8})\b)/g,
-                    "Số điện thoại không hợp lệ."
-                ),
+                .required("Số điện thoại không hợp lệ.")
+                .min(10, "Số điện thoại không hợp lệ."),
             confirmPassword: yup.string().oneOf([yup.ref('password'), null], 'Mật khẩu không trùng khớp.'),
             avatar: yup
                 .string()
