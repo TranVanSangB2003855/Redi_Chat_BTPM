@@ -18,9 +18,4 @@ module.exports = function(app) {
     "/api/auth/updateinfo",
     controller.updateInfo
   );
-
-  app.put(
-    "/api/auth/changepassword",
-    controller.changePassword
-  );
 };

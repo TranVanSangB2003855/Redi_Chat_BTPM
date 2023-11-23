@@ -85,26 +85,3 @@ exports.updateInfo = async (req, res) => {
         console.log(error)
     }
 };
-
-var bcrypt = require("bcryptjs");
-
-exports.changePassword = async (req, res) => {
-    try {
-        let user = await USER.findById(req.body._id);
-        console.log(user)
-        var passwordIsValid = bcrypt.compareSync(
-            req.body.currentPassword,
-            user.password
-        );
-
-        if (!passwordIsValid) {
-            return res.status(401).send({ message: "Mật khẩu hiện tại chưa đúng !" });
-        }
-        else {
-            await user.updateOne({ password: bcrypt.hashSync(req.body.password, 8) });
-            return res.send({ message: "Updated successfully" });
-        }
-    } catch (error) {
-        console.log(error)
-    }
-}
