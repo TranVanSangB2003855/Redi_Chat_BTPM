@@ -181,8 +181,7 @@ export default {
                 .max(50, "Họ và tên có nhiều nhất 50 ký tự."),
             password: yup
                 .string()
-                .required("Mật khẩu phải có giá trị.")
-                .min(8, "Mật khẩu phải ít nhất 8 ký tự."),
+                .required("Mật khẩu phải có giá trị."),
             phone: yup
                 .string()
                 .required("Số điện thoại không hợp lệ.")
@@ -196,14 +195,11 @@ export default {
         const dataSignInFormSchema = yup.object().shape({
             password: yup
                 .string()
-                .required("Mật khẩu phải có giá trị.")
-                .min(8, "Mật khẩu phải ít nhất 8 ký tự."),
+                .required("Mật khẩu phải có giá trị."),
             phone: yup
                 .string()
-                .matches(
-                    /((09|03|07|08|05)+([0-9]{8})\b)/g,
-                    "Số điện thoại không hợp lệ."
-                ),
+                .required("Số điện thoại không hợp lệ.")
+                .min(10, "Số điện thoại không hợp lệ."),
         });
         return {
             statusSidebar,
@@ -449,7 +445,7 @@ export default {
                 return;
             }
 
-            let check = this.searchText.match(/((09|03|07|08|05)+([0-9]{8})\b)/);
+            let check = this.searchText.length >= 10;
 
             if (!check) {
                 alert(`Số điện thoại: "${this.searchText}" chưa hợp lệ !`);

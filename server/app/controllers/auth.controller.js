@@ -5,7 +5,6 @@ const CHATROOM = require("../models/chatRoom.model");
 const MESSAGE = require("../models/message.model");
 
 var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
 
 exports.signup = async (req, res) => {
   try {
@@ -17,7 +16,7 @@ exports.signup = async (req, res) => {
         fullName: req.body.fullName,
         phone: req.body.phone,
         avatar: req.body.avatar,
-        password: bcrypt.hashSync(req.body.password, 8),
+        password: req.body.password,
         createAt: redi.getTime(),
         lastAccess: redi.getTime(),
         requestContact: [],
@@ -36,7 +35,7 @@ exports.signin = async (req, res) => {
     const user = await USER.findOne({ phone: req.body.phone });
     console.log()
     if (user) {
-      const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+      const passwordIsValid = req.body.password === user.password;
       if (passwordIsValid) {
         let chatRooms = await CHATROOM.find({ owner: user });
         let friends = await USER.find({ _id: user.contacts }, { password: 0, requestContact: 0, contacts: 0, createAt: 0, lastAccess: 0, __v: 0 });

@@ -22,6 +22,14 @@ exports.getInfoUser = async (req, res) => {
 
     try {
         const user = await USER.findById(req.userId);
+        if(!user) {
+            res.status(403).send({
+                message: {
+                    'msg': 'Token không hợp lệ !' 
+                }
+            });
+            return
+        }
         let chatRooms = await CHATROOM.find({ owner: user });
         let friends = await USER.find({ _id: user.contacts }, { password: 0, requestContact: 0, contacts: 0, createAt: 0, lastAccess: 0, __v: 0 });
         let requestContact = await USER.find({ _id: user.requestContact }, { password: 0, requestContact: 0, contacts: 0, createAt: 0, lastAccess: 0, __v: 0 });
@@ -70,6 +78,11 @@ exports.getInfoUser = async (req, res) => {
         });
 
     } catch (error) {
+        res.status(403).send({
+            message: {
+                'msg': 'Token không hợp lệ !' 
+            }
+        });
         console.error(error);
     }
 }
